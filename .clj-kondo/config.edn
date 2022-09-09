@@ -1,0 +1,3 @@
+{:skip-comments true
+ :lint-as       {com.akovantsev.blet.core/blet  clojure.core/let
+                 com.akovantsev.blet.core/blet! clojure.core/let}}
