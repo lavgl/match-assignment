@@ -1,3 +1,4 @@
 {:skip-comments true
  :lint-as       {com.akovantsev.blet.core/blet  clojure.core/let
-                 com.akovantsev.blet.core/blet! clojure.core/let}}
+                 com.akovantsev.blet.core/blet! clojure.core/let
+                 mount.core/defstate            clojure.core/def}}
