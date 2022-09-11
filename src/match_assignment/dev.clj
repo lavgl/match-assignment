@@ -1,4 +1,4 @@
-(ns mvp-assignment.dev
+(ns match-assignment.dev
   (:gen-class)
   (:require [clojure.java.io :as io]
             [clojure.tools.namespace.repl :as tn]
@@ -7,7 +7,7 @@
             [mount.core :as mount]
             [nextjournal.beholder :as beholder]
 
-            [mvp-assignment.core]))
+            [match-assignment.core]))
 
 
 (defn start-nrepl! [port]

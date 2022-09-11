@@ -1,7 +1,7 @@
 (ns user
   (:require [mount.core :as mount]
 
-            [mvp-assignment.core]))
+            [match-assignment.core]))
 
 
 (defn start []

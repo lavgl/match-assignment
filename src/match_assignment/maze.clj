@@ -1,4 +1,4 @@
-(ns mvp-assignment.maze
+(ns match-assignment.maze
   (:refer-clojure :exclude [print])
   (:require [clojure.string :as str]
             [clojure.set :as set]

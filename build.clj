@@ -2,9 +2,9 @@
   (:refer-clojure :exclude [test])
   (:require [org.corfield.build :as bb]))
 
-(def lib 'net.clojars.mvp-assignment/mvp-assignment)
+(def lib 'net.clojars.match-assignment/match-assignment)
 (def version "0.1.0-SNAPSHOT")
-(def main 'mvp-assignment.mvp-assignment)
+(def main 'match-assignment.match-assignment)
 
 (defn test "Run the tests." [opts]
   (bb/run-tests opts))

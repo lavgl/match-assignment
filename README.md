@@ -1,10 +1,10 @@
-# mvp-assignment
+# match-assignment
 
 FIXME: my new application.
 
 ## Installation
 
-Download from https://github.com/mvp-assignment/mvp-assignment
+Download from https://github.com/match-assignment/match-assignment
 
 ## Usage
 
@@ -20,7 +20,7 @@ Run the project, overriding the name to be greeted:
     $ clojure -X:run-x :name '"Someone"'
     Hello, Someone!
 
-Run the project directly, via `:main-opts` (`-m mvp-assignment.mvp-assignment`):
+Run the project directly, via `:main-opts` (`-m match-assignment.match-assignment`):
 
     $ clojure -M:run-m
     Hello, World!
@@ -48,9 +48,9 @@ from `build.clj`.
 
 Run that uberjar:
 
-    $ java -jar target/mvp-assignment-0.1.0-SNAPSHOT.jar
+    $ java -jar target/match-assignment-0.1.0-SNAPSHOT.jar
 
-If you remove `version` from `build.clj`, the uberjar will become `target/mvp-assignment-standalone.jar`.
+If you remove `version` from `build.clj`, the uberjar will become `target/match-assignment-standalone.jar`.
 
 ## Options
 

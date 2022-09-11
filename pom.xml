@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.clojars.mvp-assignment</groupId>
-  <artifactId>mvp-assignment</artifactId>
+  <groupId>net.clojars.match-assignment</groupId>
+  <artifactId>match-assignment</artifactId>
   <version>0.1.0-SNAPSHOT</version>
-  <name>mvp-assignment</name>
+  <name>match-assignment</name>
   <description>FIXME: my new application.</description>
-  <url>https://github.com/mvp-assignment/mvp-assignment</url>
+  <url>https://github.com/match-assignment/match-assignment</url>
   <licenses>
     <license>
       <name>Eclipse Public License</name>
@@ -19,9 +19,9 @@
     </developer>
   </developers>
   <scm>
-    <url>https://github.com/mvp-assignment/mvp-assignment</url>
-    <connection>scm:git:git://github.com/mvp-assignment/mvp-assignment.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/mvp-assignment/mvp-assignment.git</developerConnection>
+    <url>https://github.com/match-assignment/match-assignment</url>
+    <connection>scm:git:git://github.com/match-assignment/match-assignment.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/match-assignment/match-assignment.git</developerConnection>
     <tag>v0.1.0-SNAPSHOT</tag>
   </scm>
   <dependencies>
