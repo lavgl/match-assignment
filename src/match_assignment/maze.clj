@@ -26,18 +26,20 @@
     [(parse-x x) (parse-y y)]))
 
 
-(defn parse [{::keys [gridsize entrance walls]}]
-  (let [[max-x max-y] (parse-gridsize gridsize)
+(defn exits [{::keys [gridsize entrance walls]}]
+  (let [[max-x max-y] gridsize]
+    (->> (map vector (range max-x 0 -1) (repeat max-y))
+         (remove #{entrance})
+         (remove walls))))
+
+
+(defn parse [{:keys [gridSize entrance walls]}]
+  (let [[max-x max-y] (parse-gridsize gridSize)
         walls         (set (map parse-cell walls))
-        entrance      (parse-cell entrance)
-        exit          (->> (map vector (range max-x 0 -1) (repeat max-y))
-                           (remove #{entrance})
-                           (remove walls)
-                           first)]
+        entrance      (parse-cell entrance)]
     {::gridsize [max-x max-y]
      ::entrance entrance
-     ::walls    walls
-     ::exit     exit}))
+     ::walls    walls}))
 
 
 (defn ->str [{::keys [gridsize entrance walls exit path]}]
@@ -69,10 +71,7 @@
 
 
 (defn print [maze]
-  (cond-> maze
-    (nil? (::exit maze)) parse
-    :always              ->str
-    :always              println))
+  (-> maze ->str println))
 
 
 (defn neighbors [[x y] & {::keys [gridsize]}]
@@ -87,11 +86,8 @@
       (remove nil?))))
 
 
-(defn solutions [input]
-  ;; TODO: add docstring
-  (let [{::keys [gridsize entrance walls exit] :as maze} (parse input)
-
-        step (fn step [initial-todo]
+(defn solutions-seq [{::keys [gridsize entrance walls exit] :as maze}]
+  (let [step (fn step [initial-todo]
                (lazy-seq
                  (loop [todo initial-todo]
                    (blet [[seen path] (peek todo)
@@ -105,29 +101,62 @@
                                         frontier)
                           todo+       (into todo- todos)]
                      (cond
-                       (empty? todo)     nil
-                       (= exit xy)       (cons (assoc maze
-                                                 ::path     path
-                                                 ::distance (count path))
-                                           (step todo-))
+                       (empty? todo) nil
+                       (= exit xy)   (cons (assoc maze
+                                             ::path     path
+                                             ::distance (count path))
+                                       (step todo-))
+
                        (empty? frontier) (recur todo-)
                        :else             (recur todo+))))))]
     (step [[#{} [entrance]]])))
 
 
+(defn reachable? [cell maze]
+  (let [entrance      (::entrance maze)
+        reversed-maze (assoc maze
+                        ::entrance cell
+                        ::exit entrance)]
+    (->> reversed-maze
+         solutions-seq
+         seq
+         boolean)))
+
+
+(defn process [input]
+  (blet [maze        (parse input)
+         exits       (->> (exits maze)
+                          (filter #(reachable? % maze)))
+         exits-count (count exits)
+
+         solutions (->> (assoc maze ::exit (first exits))
+                        solutions-seq
+                        (sort-by ::distance))
+         min-steps (first solutions)
+         max-steps (last solutions)]
+    (cond
+      (zero? exits-count) {::error ::no-solutions}
+      (> exits-count 1)   {::error ::too-many-exits}
+      :else               {::min min-steps
+                           ::max max-steps})))
+
+
 (comment
-  (def TEST-INPUT {::gridsize "8x8"
-                   ::entrance "A1"
-                   ::walls    ["C1", "G1", "A2", "C2", "E2", "G2", "C3", "E3", "B4", "C4", "E4", "F4", "G4", #_"B5", "E5", "B6", "D6", "E6", "G6", "H6", "B7", "D7", "G7", "B8"]})
+  (def TEST-INPUT {:gridSize "8x8"
+                   :entrance "A1"
+                   :walls    ["C1", "G1", "A2", "C2", "E2", "G2", "C3", "E3", "B4", "C4", "E4", "F4", "G4", "B5", "E5", "B6", "D6", "E6", "G6", "H6", "B7", "D7", "G7", "B8"]})
+
+
+  (-> TEST-INPUT
+      parse
+      print)
 
   (time
-    (->> (solutions TEST-INPUT)
-         (sort-by ::distance)
-         (take 1)
-         (map print)))
+    (process TEST-INPUT))
+
 
   (time
-    (->> (solutions TEST-INPUT)
-         (sort-by ::distance >)
-         (take 1)
-         (map print))))
+    (let [empty-maze {:gridSize "26x26"
+                      :entrance "A1"
+                      :walls    []}]
+      (process empty-maze))))
