@@ -6,9 +6,16 @@
          org.clojure/tools.logging      {:mvn/version "1.2.4"}
          ch.qos.logback/logback-classic {:mvn/version "1.2.11"}
 
-         ;; http
+         ;; http & coercion
          http-kit/http-kit {:mvn/version "2.6.0"}
          metosin/reitit    {:mvn/version "0.5.18"}
+         metosin/muuntaja  {:mvn/version "0.6.8"}
+         metosin/malli     {:mvn/version "0.8.9"}
+
+         ;; db
+         org.xerial/sqlite-jdbc            {:mvn/version "3.39.3.0"}
+         com.github.seancorfield/next.jdbc {:mvn/version "1.2.796"}
+         com.github.seancorfield/honeysql  {:mvn/version "2.3.928"}
 
          github-akovantsev/blet {:git/url "https://github.com/akovantsev/blet"
                                  :sha     "5aca99d960406878bae5680e4e672a5084adfc6b"}}

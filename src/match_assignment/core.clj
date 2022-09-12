@@ -2,4 +2,5 @@
   (:gen-class)
   (:require [mount.core :as mount]
 
-            [match-assignment.server]))
+            [match-assignment.server]
+            [match-assignment.db]))

@@ -2,15 +2,53 @@
   (:require [clojure.tools.logging :as log]
             [mount.core :as mount]
             [org.httpkit.server :as http]
-            [reitit.ring :as ring]))
+            [reitit.ring :as ring]
+            [reitit.swagger :as swagger]
+            [reitit.swagger-ui :as swagger-ui]
+            [reitit.dev.pretty :as pretty]
+            [reitit.ring.middleware.muuntaja :as muuntaja]
+            [reitit.ring.middleware.parameters :as parameters]
+            [reitit.ring.middleware.exception :as exception]
+            [reitit.ring.coercion :as coercion]
+            [reitit.coercion.malli]
+            [muuntaja.core :as m]
+            [malli.util :as mu]))
 
 
 (defn make-app []
-  (let [routes [["/" {:get {:handler (fn [_]
-                                       {:status 200
-                                        :body   "hello world!"})}}]]]
-    (-> (ring/router routes)
-        (ring/ring-handler))))
+  (let [routes [["/swagger.json" {:get {:no-doc  true
+                                        :handler (swagger/create-swagger-handler)}}]
+                ["/user" {:post {:handler    (fn [_] nil)
+                                 :swagger    {:tags ["auth"]}
+                                 :parameters {:body [:map
+                                                     [:username string?]
+                                                     [:password string?]]}}}]
+                ["/login" {:post {:handler (fn [_] nil)
+                                  :swagger {:tags ["auth"]}}}]
+
+                ["/maze" {:get  {:handler (fn [_] nil)
+                                 :swagger {:tags ["maze"]}}
+                          :post {:handler (fn [_] nil)
+                                 :swagger {:tags ["maze"]}}}]
+                ["/maze/:id/solution" {:get {:handler (fn [] nil)
+                                             :swagger {:tags ["maze"]}}}]]
+        default (ring/routes
+                  (swagger-ui/create-swagger-ui-handler {:path "/"})
+                  (ring/create-default-handler))]
+    (-> (ring/router routes {:exception pretty/exception
+                             :data      {:muuntaja   m/instance
+                                         :coercion   (reitit.coercion.malli/create
+                                                       {:compile    mu/closed-schema
+                                                        :error-keys #{:schema :errors :value :in :humanized}})
+                                         :middleware [swagger/swagger-feature
+                                                      parameters/parameters-middleware
+                                                      muuntaja/format-negotiate-middleware
+                                                      muuntaja/format-response-middleware
+                                                      muuntaja/format-request-middleware
+                                                      exception/exception-middleware
+                                                      coercion/coerce-response-middleware
+                                                      coercion/coerce-request-middleware]}})
+        (ring/ring-handler default))))
 
 
 (mount/defstate server
