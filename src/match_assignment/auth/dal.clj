@@ -14,9 +14,13 @@
 
 (defn user-by-username-q [username]
   {:from   [:auth]
-   :select [:user_id]
+   :select [[:user_id :id] :username :password_hash]
    :where  [:= username :username]})
 
 
+(defn user-by-username [username]
+  (db/one (user-by-username-q username)))
+
+
 (defn username-taken? [username]
-  (some? (db/one (user-by-username-q username))))
+  (some? (user-by-username username)))

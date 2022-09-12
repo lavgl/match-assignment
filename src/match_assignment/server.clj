@@ -14,6 +14,7 @@
             [muuntaja.core :as m]
             [malli.util :as mu]
 
+            [match-assignment.auth.schema :as auth.schema]
             [match-assignment.auth.api :as auth.api]))
 
 
@@ -22,16 +23,14 @@
                                         :handler (swagger/create-swagger-handler)}}]
                 ["/user" {:post {:handler    auth.api/registration
                                  :swagger    {:tags ["auth"]}
-                                 :parameters {:body
-                                              [:map
-                                               [:username string?]
-                                               [:password string?]]}
+                                 :parameters {:body auth.schema/UserLogin}
                                  :responses  {201 {}
-                                              400 {:body
-                                                   [:map
-                                                    [:error string?]]}}}}]
-                ["/login" {:post {:handler (fn [_] nil)
-                                  :swagger {:tags ["auth"]}}}]
+                                              400 {:body auth.schema/ErrorMessage}}}}]
+                ["/login" {:post {:handler    auth.api/login
+                                  :swagger    {:tags ["auth"]}
+                                  :parameters {:body auth.schema/UserLogin}
+                                  :responses  {200 {:body {:token string?}}
+                                               400 {:body auth.schema/ErrorMessage}}}}]
 
                 ["/maze" {:get  {:handler (fn [_] nil)
                                  :swagger {:tags ["maze"]}}
