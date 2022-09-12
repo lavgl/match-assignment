@@ -12,17 +12,24 @@
             [reitit.ring.coercion :as coercion]
             [reitit.coercion.malli]
             [muuntaja.core :as m]
-            [malli.util :as mu]))
+            [malli.util :as mu]
+
+            [match-assignment.auth.api :as auth.api]))
 
 
 (defn make-app []
   (let [routes [["/swagger.json" {:get {:no-doc  true
                                         :handler (swagger/create-swagger-handler)}}]
-                ["/user" {:post {:handler    (fn [_] nil)
+                ["/user" {:post {:handler    auth.api/registration
                                  :swagger    {:tags ["auth"]}
-                                 :parameters {:body [:map
-                                                     [:username string?]
-                                                     [:password string?]]}}}]
+                                 :parameters {:body
+                                              [:map
+                                               [:username string?]
+                                               [:password string?]]}
+                                 :responses  {201 {}
+                                              400 {:body
+                                                   [:map
+                                                    [:error string?]]}}}}]
                 ["/login" {:post {:handler (fn [_] nil)
                                   :swagger {:tags ["auth"]}}}]
 

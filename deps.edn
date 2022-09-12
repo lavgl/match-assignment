@@ -12,6 +12,9 @@
          metosin/muuntaja  {:mvn/version "0.6.8"}
          metosin/malli     {:mvn/version "0.8.9"}
 
+         ;; auth
+         buddy/buddy-hashers {:mvn/version "1.8.158"}
+
          ;; db
          org.xerial/sqlite-jdbc            {:mvn/version "3.39.3.0"}
          com.github.seancorfield/next.jdbc {:mvn/version "1.2.796"}

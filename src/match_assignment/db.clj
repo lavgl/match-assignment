@@ -21,3 +21,7 @@
 
 (defn q [query]
   (jdbc/execute! conn (query->args query)))
+
+
+(defn one [query]
+  (jdbc/execute-one! conn (query->args query)))
