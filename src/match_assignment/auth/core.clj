@@ -1,5 +1,6 @@
 (ns match-assignment.auth.core
-  (:require [buddy.sign.jwt :as jwt]
+  (:require [mount.core :as mount]
+            [buddy.sign.jwt :as jwt]
             [buddy.auth.backends :as buddy-auth-backends]
             [buddy.auth.middleware :as buddy-auth-middleware]
 
@@ -10,10 +11,10 @@
 (def secret (memoize -secret))
 
 
-(def token-backend
-  (buddy-auth-backends/jws {:secret     (secret)
-                            :options    {:alg :hs512}
-                            :token-name "Bearer"}))
+(mount/defstate token-backend
+  :start (buddy-auth-backends/jws {:secret     (secret)
+                                   :options    {:alg :hs512}
+                                   :token-name "Bearer"}))
 
 
 (defn token-middleware [handler]

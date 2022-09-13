@@ -1,17 +1,26 @@
 (ns build
-  (:refer-clojure :exclude [test])
-  (:require [org.corfield.build :as bb]))
+  (:require [clojure.tools.build.api :as b]))
 
-(def lib 'net.clojars.match-assignment/match-assignment)
-(def version "0.1.0-SNAPSHOT")
-(def main 'match-assignment.match-assignment)
 
-(defn test "Run the tests." [opts]
-  (bb/run-tests opts))
+(def class-dir "target/classes")
+(def basis (b/create-basis {:project "deps.edn"}))
+(def version (format "0.0.%s" (b/git-count-revs nil)))
+(def uber-file (format "target/match-%s.jar" version))
 
-(defn ci "Run the CI pipeline of tests (and build the uberjar)." [opts]
-  (-> opts
-      (assoc :lib lib :version version :main main)
-      (bb/run-tests)
-      (bb/clean)
-      (bb/uber)))
+
+(defn clean [_]
+  (b/delete {:path "target"}))
+
+
+(defn uber [_]
+  (clean nil)
+  (b/copy-dir {:src-dirs   ["src" "resources"]
+               :target-dir class-dir})
+  (b/compile-clj {:basis      basis
+                  :ns-compile ['match-assignment.core]
+                  :class-dir  class-dir})
+  (b/uber {:class-dir class-dir
+           :uber-file uber-file
+           :exclude   ["LICENSE"]
+           :basis     basis
+           :main      'match-assignment.core}))
