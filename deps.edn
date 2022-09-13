@@ -11,6 +11,7 @@
          metosin/reitit    {:mvn/version "0.5.18"}
          metosin/muuntaja  {:mvn/version "0.6.8"}
          metosin/malli     {:mvn/version "0.8.9"}
+         metosin/jsonista  {:mvn/version "0.3.6"}
 
          ;; auth
          buddy/buddy-hashers {:mvn/version "1.8.158"}

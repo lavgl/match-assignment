@@ -2,6 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [mount.core :as mount]
             [next.jdbc :as jdbc]
+            [next.jdbc.result-set :as jdbc-rs]
             [honey.sql :as sql]))
 
 
@@ -20,8 +21,10 @@
 
 
 (defn q [query]
-  (jdbc/execute! conn (query->args query)))
+  (jdbc/execute! conn (query->args query)
+    {:builder-fn jdbc-rs/as-unqualified-lower-maps}))
 
 
 (defn one [query]
-  (jdbc/execute-one! conn (query->args query)))
+  (jdbc/execute-one! conn (query->args query)
+    {:builder-fn jdbc-rs/as-unqualified-lower-maps}))

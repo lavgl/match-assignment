@@ -1,4 +1,4 @@
-(ns match-assignment.maze
+(ns match-assignment.maze.core
   (:refer-clojure :exclude [print])
   (:require [clojure.string :as str]
             [clojure.set :as set]
@@ -24,6 +24,10 @@
 (defn parse-cell [^String id]
   (when-let [[_ x y] (re-matches #"([a-zA-Z]+)(\d+)" id)]
     [(parse-x x) (parse-y y)]))
+
+
+(defn format-cell [[x y]]
+  (str (unparse-x x) y))
 
 
 (defn exits [{::keys [gridsize entrance walls]}]
@@ -72,6 +76,11 @@
 
 (defn print [maze]
   (-> maze ->str println))
+
+
+(defn format-path [{::keys [path]}]
+  (println "format-path" path)
+  (map format-cell path))
 
 
 (defn neighbors [[x y] & {::keys [gridsize]}]
@@ -146,10 +155,10 @@
                    :entrance "A1"
                    :walls    ["C1", "G1", "A2", "C2", "E2", "G2", "C3", "E3", "B4", "C4", "E4", "F4", "G4", "B5", "E5", "B6", "D6", "E6", "G6", "H6", "B7", "D7", "G7", "B8"]})
 
-
   (-> TEST-INPUT
       parse
       print)
+
 
   (time
     (process TEST-INPUT))

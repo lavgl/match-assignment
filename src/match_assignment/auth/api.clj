@@ -5,6 +5,12 @@
             [match-assignment.auth.utils :as auth.utils]))
 
 
+(def UserLogin
+  [:map
+   [:username string?]
+   [:password string?]])
+
+
 (defn registration [req]
   (blet [{:keys [username password]} (-> req :body-params)
          is-username-valid           (auth.utils/username-valid? username)
