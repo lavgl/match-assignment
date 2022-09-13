@@ -14,16 +14,16 @@
 
 
 (defn create [req]
-  (blet! [input                           (-> req :body-params)
-          {:maze/keys [error] :as result} (maze/process input)
-          min-path                        (-> result ::maze/min maze/format-path)
-          max-path                        (-> result ::maze/max maze/format-path)
+  (blet [user-id                         (-> req :identity :user_id)
+         input                           (-> req :body-params)
+         {:maze/keys [error] :as result} (maze/process input)
+         min-path                        (-> result ::maze/min maze/format-path)
+         max-path                        (-> result ::maze/max maze/format-path)
 
-          ;; TODO: replace user-id with real identity provided by token
-          inserted-maze (maze.dal/insert-maze! {:user-id  1
-                                                :input    input
-                                                :min-path min-path
-                                                :max-path max-path})]
+         inserted-maze (maze.dal/insert-maze! {:user-id  user-id
+                                               :input    input
+                                               :min-path min-path
+                                               :max-path max-path})]
     (cond
       (= error :maze/no-solutions)
       {:status 400
@@ -44,19 +44,17 @@
                :id (:id %)))))
 
 
-(defn list [req]
-  ;; TODO: get true identity
-  (let [user-id 1
+(defn list [{:keys [identity]}]
+  (let [user-id (:user_id identity)
         mazes   (maze.dal/mazes-by-user-id user-id)]
     {:status 200
      :body   {:mazes (format-list-response mazes)}}))
 
 
-(defn solution [{:keys [parameters] :as req}]
-  (blet [maze-id (-> parameters :path :maze-id)
+(defn solution [{:keys [parameters identity]}]
+  (blet [user-id (:user_id identity)
+         maze-id (-> parameters :path :maze-id)
          steps   (-> parameters :query :steps)
-         ;; TODO: get true identity
-         user-id 1
 
          {:keys [min_path max_path]
           :as   solutions} (maze.dal/solutions {:user-id user-id

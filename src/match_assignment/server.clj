@@ -14,6 +14,7 @@
             [muuntaja.core :as m]
             [malli.util :as mu]
 
+            [match-assignment.auth.core :as auth]
             [match-assignment.auth.api :as auth.api]
             [match-assignment.maze.api :as maze.api]))
 
@@ -37,36 +38,37 @@
                                   :responses  {200 {:body {:token string?}}
                                                400 {:body ErrorMessage}}}}]
 
-                ["/maze" {:get  {:handler maze.api/list
-                                 :swagger {:tags ["maze"]}}
-                          :post {:handler    maze.api/create
-                                 :swagger    {:tags ["maze"]}
-                                 :parameters {:body maze.api/MazeInput}
-                                 :responses  {201 {:body {:id int?}}
-                                              400 {:body ErrorMessage}}}}]
-                ["/maze/:maze-id/solution" {:get {:handler    maze.api/solution
-                                                  :swagger    {:tags ["maze"]}
-                                                  :parameters {:path  [:map
-                                                                       [:maze-id int?]]
-                                                               :query [:map
-                                                                       [:steps [:enum "min" "max"]]]}}}]]
+                ["" {:middleware [auth/authorized?]}
+                 ["/maze" {:get  {:handler maze.api/list
+                                  :swagger {:tags ["maze"]}}
+                           :post {:handler    maze.api/create
+                                  :swagger    {:tags ["maze"]}
+                                  :parameters {:body maze.api/MazeInput}
+                                  :responses  {201 {:body {:id int?}}
+                                               400 {:body ErrorMessage}}}}]
+                 ["/maze/:maze-id/solution" {:get {:handler    maze.api/solution
+                                                   :swagger    {:tags ["maze"]}
+                                                   :parameters {:path  [:map
+                                                                        [:maze-id int?]]
+                                                                :query [:map
+                                                                        [:steps [:enum "min" "max"]]]}}}]]]
         default (ring/routes
                   (swagger-ui/create-swagger-ui-handler {:path "/"})
                   (ring/create-default-handler))]
-    (-> (ring/router routes {
-                             ;; :exception pretty/exception
-                             :data {:muuntaja   m/instance
-                                    :coercion   (reitit.coercion.malli/create
-                                                  {:compile    mu/closed-schema
-                                                   :error-keys #{:schema :errors :value :in :humanized}})
-                                    :middleware [swagger/swagger-feature
-                                                 parameters/parameters-middleware
-                                                 muuntaja/format-negotiate-middleware
-                                                 muuntaja/format-response-middleware
-                                                 muuntaja/format-request-middleware
-                                                 ;; exception/exception-middleware
-                                                 coercion/coerce-response-middleware
-                                                 coercion/coerce-request-middleware]}})
+    (-> (ring/router routes {:exception pretty/exception
+                             :data      {:muuntaja   m/instance
+                                         :coercion   (reitit.coercion.malli/create
+                                                       {:compile    mu/closed-schema
+                                                        :error-keys #{:schema :errors :value :in :humanized}})
+                                         :middleware [swagger/swagger-feature
+                                                      parameters/parameters-middleware
+                                                      muuntaja/format-negotiate-middleware
+                                                      muuntaja/format-response-middleware
+                                                      muuntaja/format-request-middleware
+                                                      exception/exception-middleware
+                                                      coercion/coerce-response-middleware
+                                                      coercion/coerce-request-middleware
+                                                      auth/token-middleware]}})
         (ring/ring-handler default))))
 
 

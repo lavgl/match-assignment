@@ -79,7 +79,6 @@
 
 
 (defn format-path [{::keys [path]}]
-  (println "format-path" path)
   (map format-cell path))
 
 

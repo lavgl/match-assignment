@@ -16,6 +16,8 @@
          ;; auth
          buddy/buddy-hashers {:mvn/version "1.8.158"}
          buddy/buddy-sign    {:mvn/version "3.4.333"}
+         buddy/buddy-auth    {:mvn/version "3.0.1"}
+
 
          ;; db
          org.xerial/sqlite-jdbc            {:mvn/version "3.39.3.0"}
