@@ -6,6 +6,10 @@
             [com.akovantsev.blet.core :refer [blet blet!]]))
 
 
+;; NOTE: to avoid mapping huge `x` like 'AA', 'AZ'
+(def MAX-SIZE 26)
+
+
 ;; `parse-x` is a map {"A" 1, "B" 2, ..., "Z" 26}
 (def parse-x (into {} (map vector (map str "ABCDEFGHIJKLMNOPQRSTUVWXYZ") (rest (range)))))
 (def parse-y #(Integer/parseInt %))
@@ -131,8 +135,15 @@
          boolean)))
 
 
+(defn maze-too-big? [{::keys [gridsize]}]
+  (let [[max-x max-y] gridsize]
+    (or (> max-x MAX-SIZE)
+        (> max-y MAX-SIZE))))
+
+
 (defn process [input]
   (blet [maze        (parse input)
+         is-too-big  (maze-too-big? maze)
          exits       (->> (exits maze)
                           (filter #(reachable? % maze)))
          exits-count (count exits)
@@ -143,6 +154,7 @@
          min-steps (first solutions)
          max-steps (last solutions)]
     (cond
+      is-too-big          {::error ::too-big-maze}
       (zero? exits-count) {::error ::no-solutions}
       (> exits-count 1)   {::error ::too-many-exits}
       :else               {::min min-steps

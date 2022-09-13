@@ -25,6 +25,10 @@
                                                :min-path min-path
                                                :max-path max-path})]
     (cond
+      (= error :maze/too-big-maze)
+      {:status 400
+       :body   {:error "Maze is too big"}}
+
       (= error :maze/no-solutions)
       {:status 400
        :body   {:error "Maze has ho solutions"}}
@@ -52,13 +56,13 @@
 
 
 (defn solution [{:keys [parameters identity]}]
-  (blet [user-id (:user_id identity)
-         maze-id (-> parameters :path :maze-id)
-         steps   (-> parameters :query :steps)
+  (let [user-id (:user_id identity)
+        maze-id (-> parameters :path :maze-id)
+        steps   (-> parameters :query :steps)
 
-         {:keys [min_path max_path]
-          :as   solutions} (maze.dal/solutions {:user-id user-id
-                                                :maze-id maze-id})]
+        {:keys [min_path max_path]
+         :as   solutions} (maze.dal/solutions {:user-id user-id
+                                               :maze-id maze-id})]
     (cond
       (empty? solutions)
       {:status 404
