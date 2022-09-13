@@ -1,15 +1,17 @@
 (ns match-assignment.auth.core
   (:require [buddy.sign.jwt :as jwt]
             [buddy.auth.backends :as buddy-auth-backends]
-            [buddy.auth.middleware :as buddy-auth-middleware]))
+            [buddy.auth.middleware :as buddy-auth-middleware]
+
+            [match-assignment.config :as config]))
 
 
-;; TODO: get private key from env param / file via config
-(def private-key "private key")
+(defn- -secret [] (config/auth-secret))
+(def secret (memoize -secret))
 
 
 (def token-backend
-  (buddy-auth-backends/jws {:secret     private-key
+  (buddy-auth-backends/jws {:secret     (secret)
                             :options    {:alg :hs512}
                             :token-name "Bearer"}))
 
@@ -28,4 +30,4 @@
 
 (defn make-token [user]
   (let [user-id (:id user)]
-    (jwt/sign {:user_id user-id} private-key {:alg :hs512})))
+    (jwt/sign {:user_id user-id} (secret) {:alg :hs512})))

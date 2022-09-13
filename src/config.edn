@@ -1,0 +1,3 @@
+{:db     {:path #envf ["%s/.match/database.db" HOME]}
+ :server {:port 5001}
+ :auth   {:secret {:path #envf ["%s/.match/secret" HOME]}}}

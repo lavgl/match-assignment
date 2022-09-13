@@ -41,7 +41,6 @@
 
 
 (defn -main [& _args]
-  ;; TODO: move to config
   (start-nrepl! 8888)
   (start-autoreload!)
   (mount/start))

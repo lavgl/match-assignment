@@ -3,14 +3,16 @@
             [mount.core :as mount]
             [next.jdbc :as jdbc]
             [next.jdbc.result-set :as jdbc-rs]
-            [honey.sql :as sql]))
+            [honey.sql :as sql]
+
+            [match-assignment.config :as config]))
 
 
 (mount/defstate conn
-  :start (let [db-spec {:dbtype "sqlite"
-                        ;; TODO: move to config
-                        :dbname "/Users/v.homonov/.match_assignment/database.db"}]
-           (log/info "init db: " (:dbname db-spec))
+  :start (let [path    (:path (config/db))
+               db-spec {:dbtype "sqlite"
+                        :dbname path}]
+           (log/info "init db: " path)
            (jdbc/get-datasource db-spec)))
 
 

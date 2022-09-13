@@ -14,6 +14,7 @@
             [muuntaja.core :as m]
             [malli.util :as mu]
 
+            [match-assignment.config :as config]
             [match-assignment.auth.core :as auth]
             [match-assignment.auth.api :as auth.api]
             [match-assignment.maze.api :as maze.api]))
@@ -73,7 +74,7 @@
 
 
 (mount/defstate server
-  :start (let [port   5000 ;; TODO: move to config
+  :start (let [port   (:port (config/server))
                server (http/run-server (make-app) {:port port})]
            (log/info "Started http server on" port)
            server)
