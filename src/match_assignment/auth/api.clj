@@ -1,6 +1,7 @@
 (ns match-assignment.auth.api
   (:require [com.akovantsev.blet.core :refer [blet blet!]]
 
+            [match-assignment.auth.core :as auth]
             [match-assignment.auth.dal :as auth.dal]
             [match-assignment.auth.utils :as auth.utils]))
 
@@ -41,8 +42,8 @@
   (blet [{:keys [username password]} (-> req :body-params)
          is-username-valid           (auth.utils/username-valid? username)
          user                        (auth.dal/user-by-username username)
-         is-password-correct         (auth.utils/verify-password password (:auth/password_hash user))
-         token                       (auth.utils/make-token user)]
+         is-password-correct         (auth.utils/verify-password password (:password_hash user))
+         token                       (auth/make-token user)]
     (cond
       (or (not is-username-valid)
           (nil? user))
