@@ -31,4 +31,6 @@
 
 (defn make-token [user]
   (let [user-id (:id user)]
+    ;; NOTE: in the real world, tokens should live for a limited time,
+    ;; but for code challenge purposes, it's simpler to have eternal tokens
     (jwt/sign {:user_id user-id} (secret) {:alg :hs512})))
